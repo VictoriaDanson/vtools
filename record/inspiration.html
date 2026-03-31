@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>每日灵感</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        color: #0f2a1d;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          'PingFang SC',
+          'Noto Sans CJK SC',
+          'Microsoft YaHei',
+          Arial,
+          sans-serif;
+        padding: 20px;
+        background:
+          radial-gradient(
+            900px 500px at 10% 10%,
+            rgba(31, 157, 85, 0.12),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 500px at 90% 0%,
+            rgba(25, 180, 106, 0.1),
+            transparent 60%
+          ),
+          #f3fbf6;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        color: #0f2a1d;
+        font-size: 1.5rem;
+        margin-bottom: 24px;
+        font-weight: 500;
+      }
+
+      .input-section {
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 12px rgba(46, 125, 50, 0.1);
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 100px;
+        border: 1px solid #c8e6c9;
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 16px;
+        resize: vertical;
+        outline: none;
+        font-family: inherit;
+        line-height: 1.5;
+      }
+
+      textarea:focus {
+        border-color: #81c784;
+        box-shadow: 0 0 0 2px rgba(129, 199, 132, 0.3);
+      }
+
+      .btn-row {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 12px;
+      }
+
+      button {
+        background: linear-gradient(135deg, #66bb6a, #43a047);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 20px;
+        font-size: 15px;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .list-section {
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 2px 12px rgba(46, 125, 50, 0.1);
+      }
+
+      .list-title {
+        color: #0f2a1d;
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #e8f5e9;
+      }
+
+      .empty-tip {
+        text-align: center;
+        color: #9e9e9e;
+        padding: 40px 0;
+        font-size: 14px;
+      }
+
+      .item {
+        padding: 12px 0;
+        border-bottom: 1px solid #e8f5e9;
+      }
+
+      .item:last-child {
+        border-bottom: none;
+      }
+
+      .item-date {
+        color: #689f38;
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+      }
+
+      .item-content {
+        color: #333;
+        font-size: 15px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .item-delete {
+        float: right;
+        color: #bdbdbd;
+        font-size: 12px;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 4px;
+        transition: all 0.2s;
+      }
+
+      .item-delete:hover {
+        color: #e57373;
+        background: #ffebee;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>每日灵感</h1>
+
+      <div class="input-section">
+        <textarea id="input" placeholder="记录此刻的灵感..."></textarea>
+        <div class="btn-row">
+          <button id="submitBtn">记录</button>
+        </div>
+      </div>
+
+      <div class="list-section">
+        <div class="list-title">历史记录</div>
+        <div id="list"></div>
+      </div>
+    </div>
+
+    <script>
+      const input = document.getElementById('input')
+      const submitBtn = document.getElementById('submitBtn')
+      const list = document.getElementById('list')
+
+      // 从 localStorage 加载数据
+      function loadItems() {
+        const data = localStorage.getItem('inspirations')
+        return data ? JSON.parse(data) : []
+      }
+
+      // 保存到 localStorage
+      function saveItems(items) {
+        localStorage.setItem('inspirations', JSON.stringify(items))
+      }
+
+      // 格式化日期
+      function formatDate(timestamp) {
+        const date = new Date(timestamp)
+        const y = date.getFullYear()
+        const m = String(date.getMonth() + 1).padStart(2, '0')
+        const d = String(date.getDate()).padStart(2, '0')
+        const h = String(date.getHours()).padStart(2, '0')
+        const min = String(date.getMinutes()).padStart(2, '0')
+        return `${y}-${m}-${d} ${h}:${min}`
+      }
+
+      // 渲染列表
+      function render() {
+        const items = loadItems()
+
+        if (items.length === 0) {
+          list.innerHTML =
+            '<div class="empty-tip">暂无记录，写下你的第一个灵感吧</div>'
+          return
+        }
+
+        list.innerHTML = items
+          .map(
+            (item, index) => `
+                <div class="item">
+                    <span class="item-delete" onclick="deleteItem(${index})">删除</span>
+                    <div class="item-date">${formatDate(item.time)}</div>
+                    <div class="item-content">${escapeHtml(item.content)}</div>
+                </div>
+            `
+          )
+          .join('')
+      }
+
+      // 转义 HTML
+      function escapeHtml(text) {
+        const div = document.createElement('div')
+        div.textContent = text
+        return div.innerHTML
+      }
+
+      // 添加记录
+      function add() {
+        const content = input.value.trim()
+        if (!content) return
+
+        const items = loadItems()
+        items.unshift({
+          content: content,
+          time: Date.now()
+        })
+        saveItems(items)
+
+        input.value = ''
+        render()
+      }
+
+      // 删除记录
+      function deleteItem(index) {
+        const items = loadItems()
+        items.splice(index, 1)
+        saveItems(items)
+        render()
+      }
+
+      // 事件绑定
+      submitBtn.addEventListener('click', add)
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+          e.preventDefault()
+          add()
+        }
+      })
+
+      // 初始渲染
+      render()
+    </script>
+  </body>
+</html>
