@@ -5,7 +5,6 @@
   "description": "Root project for vtools with server backend",
   "scripts": {
     "start": "node server/src/server.js",
-    "lint:server": "eslint server/src --ext .js",
     "dev:server": "nodemon server/src/server.js",
     "dev:moment-flow": "cd momentFlow && npm install && npm run dev"
   },
