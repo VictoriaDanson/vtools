@@ -1,0 +1,5 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 仅使用 Tailwind 原子类，不在此处编写自定义样式 */

@@ -1,0 +1,23 @@
+{
+  "name": "vtools-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Root project for vtools with server backend",
+  "scripts": {
+    "start:server": "node server/src/server.js",
+    "lint:server": "eslint server/src --ext .js",
+    "dev:server": "nodemon server/src/server.js",
+    "dev:moment-flow": "cd momentFlow && npm install && npm run dev"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

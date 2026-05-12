@@ -1,0 +1,7 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Backend server for notes/images/text (config in root package.json)",
+  "main": "src/server.js"
+}

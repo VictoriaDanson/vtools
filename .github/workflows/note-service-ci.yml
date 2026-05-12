@@ -1,0 +1,35 @@
+name: Note Service CI
+
+on:
+  push:
+    paths:
+      - 'server/**'
+      - '.github/workflows/note-service-ci.yml'
+  pull_request:
+    paths:
+      - 'server/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint
+        run: npm run lint:server
+
+      - name: Run service (sanity check)
+        run: |
+          npm run start:server &
+          sleep 5
+          curl -f http://localhost:3000/health
