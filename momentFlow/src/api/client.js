@@ -1,6 +1,10 @@
 // 与 Node.js + SQLite 后端 RESTful 接口的实际对接
 
-const API_BASE_URL = 'http://localhost:3000'; // 如有代理/部署域名，可在此调整
+// 支持通过环境变量配置后端地址：
+// - 开发环境：Vite 中设置 VITE_API_BASE_URL
+// - 生产环境（GitHub Pages）：构建前也可注入对应变量
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 async function handleResponse(res) {
   if (!res.ok) {

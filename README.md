@@ -8,7 +8,7 @@
 vtools/
 ├── record/
 │   └── inspiration.html   # 每日灵感记录工具
-├── momentFlow/            # 日常图文记录前端（React + Tailwind）
+├── momentFlow/            # 日常图文记录前端（React + Tailwind，GitHub Pages 部署）
 ├── server/                # 笔记 / 图片链接 / 文字内容 接口服务
 ├── package.json           # 根目录 Node 项目配置（统一依赖）
 └── .prettierrc            # 代码格式化配置
@@ -55,6 +55,9 @@ npm run dev:moment-flow
 ```
 
 当前数据使用前端内存模拟，`src/api/client.js` 中已预留与 Node.js + SQLite 后端对接的位置，后续可按 `/notes` 等接口替换为真实请求。
+线上部署推荐：
+- 前端：使用 GitHub Pages，通过 `.github/workflows/momentflow-pages.yml` 自动构建 `momentFlow` 并发布
+- 后端：使用 Render 部署 `server` 目录，暴露 RESTful API，前端通过 `VITE_API_BASE_URL` 指向 Render 域名
 
 ### 笔记接口服务 (server)
 
