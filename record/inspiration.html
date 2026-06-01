@@ -28,15 +28,22 @@
       const submitBtn = document.getElementById('submitBtn')
       const list = document.getElementById('list')
 
-      // 从 localStorage 加载数据
-      function loadItems() {
-        const data = localStorage.getItem('inspirations')
-        return data ? JSON.parse(data) : []
-      }
+      // API基础URL
+      const API_BASE = 'http://localhost:3000/api/inspirations'
 
-      // 保存到 localStorage
-      function saveItems(items) {
-        localStorage.setItem('inspirations', JSON.stringify(items))
+      // 从服务器加载数据
+      async function loadItems() {
+        try {
+          const response = await fetch(API_BASE)
+          if (!response.ok) {
+            throw new Error('网络请求失败')
+          }
+          const items = await response.json()
+          return items || []
+        } catch (error) {
+          console.error('加载数据失败:', error)
+          return []
+        }
       }
 
       // 格式化日期
@@ -51,8 +58,8 @@
       }
 
       // 渲染列表
-      function render() {
-        const items = loadItems()
+      async function render() {
+        const items = await loadItems()
 
         if (items.length === 0) {
           list.innerHTML =
@@ -62,9 +69,9 @@
 
         list.innerHTML = items
           .map(
-            (item, index) => `
+            (item) => `
                 <div class="item">
-                    <span class="item-delete" onclick="deleteItem(${index})">删除</span>
+                    <span class="item-delete" onclick="deleteItem(${item.id})">删除</span>
                     <div class="item-date">${formatDate(item.time)}</div>
                     <div class="item-content">${escapeHtml(item.content)}</div>
                 </div>
@@ -81,27 +88,45 @@
       }
 
       // 添加记录
-      function add() {
+      async function add() {
         const content = input.value.trim()
         if (!content) return
 
-        const items = loadItems()
-        items.unshift({
-          content: content,
-          time: Date.now()
-        })
-        saveItems(items)
+        try {
+          const response = await fetch(API_BASE, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content })
+          })
 
-        input.value = ''
-        render()
+          if (!response.ok) {
+            throw new Error('添加记录失败')
+          }
+
+          input.value = ''
+          await render()
+        } catch (error) {
+          console.error('添加记录失败:', error)
+        }
       }
 
       // 删除记录
-      function deleteItem(index) {
-        const items = loadItems()
-        items.splice(index, 1)
-        saveItems(items)
-        render()
+      async function deleteItem(id) {
+        try {
+          const response = await fetch(`${API_BASE}/${id}`, {
+            method: 'DELETE'
+          })
+
+          if (!response.ok) {
+            throw new Error('删除记录失败')
+          }
+
+          await render()
+        } catch (error) {
+          console.error('删除记录失败:', error)
+        }
       }
 
       // 事件绑定
