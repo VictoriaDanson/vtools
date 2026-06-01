@@ -1,5 +1,9 @@
+const path = require('path')
 const sqlite3 = require('sqlite3').verbose()
-const db = new sqlite3.Database('./inspirations.db')
+
+// 使用绝对路径，相对于脚本文件所在目录
+const dbPath = path.join(__dirname, '../data/record.db')
+const db = new sqlite3.Database(dbPath)
 
 // 初始化数据库
 db.serialize(() => {

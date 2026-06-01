@@ -4,13 +4,10 @@
   "private": true,
   "description": "Root project for vtools with server backend",
   "scripts": {
-    "start": "node server/src/server.js",
-    "dev:server": "nodemon server/src/server.js",
-    "dev:moment-flow": "cd momentFlow && npm install && npm run dev"
-  },
-  "dependencies": {
-    "express": "^4.19.2",
-    "sqlite3": "^5.1.7"
+    "dev:server": "pnpm --filter server dev",
+    "dev:moment-flow": "pnpm --filter moment-flow dev",
+    "start:server": "pnpm --filter server start",
+    "build:moment-flow": "pnpm --filter moment-flow build"
   },
   "devDependencies": {
     "eslint": "^9.0.0",
